@@ -201,6 +201,74 @@
     renderPlanner();
   }
 
+
+  function plannerIsEmpty(){
+    const s = window.App.state;
+    return U.days.every(d => !s.planner[d] || s.planner[d].length === 0);
+  }
+
+  function clearPlanner(){
+    const s = window.App.state;
+    U.days.forEach(d => { s.planner[d] = []; });
+    persist();
+    renderPlanner();
+  }
+
+  function autoPlanWeek(){
+    const s = window.App.state;
+    if (!s.recipes || !s.recipes.length){
+      alert('Add some recipes first.');
+      return;
+    }
+    if (!plannerIsEmpty()){
+      const ok = confirm('Replace your current week with an auto plan?');
+      if (!ok) return;
+    }
+    // Reset planner
+    U.days.forEach(d => { s.planner[d] = []; });
+
+    const recipes = s.recipes.slice();
+    const used = new Set();
+    const isQuick = r => (typeof r.time === 'number' && r.time > 0) ? (r.time <= 30) : false;
+
+    const favs = recipes.filter(r => r.favorite);
+    const nonFavs = recipes.filter(r => !r.favorite);
+    const quickFavs = favs.filter(isQuick);
+    const quickNonFavs = nonFavs.filter(isQuick);
+
+    function pick(list, opts){
+      const allowRepeat = !!(opts && opts.allowRepeat);
+      if (!list || !list.length) return null;
+      const available = list.filter(r => !used.has(r.id));
+      if (!allowRepeat) {
+        if (!available.length) return null; // don't allow repeats here; try next priority list
+        const chosen = available[Math.floor(Math.random() * available.length)];
+        used.add(chosen.id);
+        return chosen.id;
+      } else {
+        const pool = available.length ? available : list; // allow repeats only as fallback
+        const chosen = pool[Math.floor(Math.random() * pool.length)];
+        if (available.length) { used.add(chosen.id); }
+        return chosen.id;
+      }
+    }
+
+    U.days.forEach(day => {
+      let id = null;
+      const isWeekend = (day === 'Sat' || day === 'Sun');
+      if (isWeekend){
+        id = pick(favs) || pick(nonFavs) || pick(recipes) || pick(favs, {allowRepeat:true}) || pick(nonFavs, {allowRepeat:true}) || pick(recipes, {allowRepeat:true});
+      } else {
+        id = pick(quickFavs) || pick(quickNonFavs) || pick(favs) || pick(nonFavs) || pick(recipes) || pick(quickFavs, {allowRepeat:true}) || pick(quickNonFavs, {allowRepeat:true}) || pick(favs, {allowRepeat:true}) || pick(nonFavs, {allowRepeat:true}) || pick(recipes, {allowRepeat:true});
+      }
+      if (id) s.planner[day].push(id);
+    });
+
+    persist();
+    generateGroceriesFromPlanner();
+    renderPlanner();
+  }
+
   function generateGroceriesFromPlanner(){
     const s = window.App.state;
     const ids = U.days.flatMap(d => s.planner[d]||[]);
@@ -318,6 +386,13 @@
       $menu.on('click', '.add-to-day', function(){ addRecipeToDay($(this).data('id'), $(this).data('day')); $menu.remove(); });
     });
 
+
+    // Planner actions
+    $('#autoPlanWeek').on('click', autoPlanWeek);
+    $('#clearPlanner').on('click', function(){
+      if (plannerIsEmpty()) { return; }
+      if (confirm('Clear all planned recipes for the week?')) { clearPlanner(); }
+    });
     // Grocery actions
     $('#generateGroceries').on('click', generateGroceriesFromPlanner);
     $('#clearGroceries').on('click', function(){ window.App.state.grocery = []; persist(); renderGroceries(); });
