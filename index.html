@@ -41,14 +41,14 @@
   </header>
 
   <main>
-    <section class="relative overflow-hidden">
+    <section class="relative z-10 overflow-visible">
       <div class="max-w-7xl mx-auto px-6 pt-16 pb-32">
         <div class="relative min-h-[28rem]">
-          <div class="max-w-xl pt-10 relative z-30">
-            <h1 class="text-5xl sm:text-6xl leading-tight font-black tracking-tight mb-6" style="font-family: 'Work Sans', sans-serif;">
+          <div id="heroText" class="max-w-2xl md:max-w-3xl pt-10 relative z-30 md:ml-8 lg:ml-16">
+            <h1 class="text-6xl sm:text-7xl leading-[1.05] font-black tracking-tight mb-6" style="font-family: 'Work Sans', sans-serif;">
               Plan delicious weeks. Shop smarter.
             </h1>
-            <p class="text-lg sm:text-xl text-[color:var(--ink-600)] leading-relaxed" style="font-family: 'Open Sans', sans-serif;">
+            <p class="text-xl sm:text-2xl text-[color:var(--ink-600)] leading-relaxed" style="font-family: 'Open Sans', sans-serif;">
               Organize recipes, tag your favorites, and auto-build a grocery list from your weekly plan. Beautiful, fast, and built for real kitchens.
             </p>
             <div class="mt-8 flex items-center gap-3">
@@ -58,8 +58,8 @@
           </div>
 
           <!-- Floating, overlapping hero objects -->
-          <div class="pointer-events-none hidden sm:block" aria-hidden="true">
-            <div class="hero-float p-4 w-60 top-10 right-4 sm:right-24 rotate-2 float-y-medium z-10">
+          <div id="heroFloats" class="pointer-events-none hidden sm:block" aria-hidden="true">
+            <div class="hero-float p-4 w-60 top-6 right-6 sm:right-48 md:right-56 rotate-2 float-y-medium z-10">
               <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-xl bg-[color:var(--mint-100)] ring-1 ring-black/5 flex items-center justify-center">
                   <span class="text-[color:var(--mint-800)] text-lg">🥗</span>
@@ -70,7 +70,7 @@
                 </div>
               </div>
             </div>
-            <div class="hero-float p-5 w-64 top-56 right-6 sm:right-52 -rotate-3 float-y-slow z-10">
+            <div class="hero-float p-5 w-64 top-48 right-10 sm:right-72 md:right-80 -rotate-3 float-y-slow z-10">
               <p class="font-semibold mb-2">This week</p>
               <ul class="text-sm text-[color:var(--ink-700)] space-y-1">
                 <li>• Mon: Lentil Soup</li>
@@ -78,7 +78,7 @@
                 <li>• Sat: Tacos al Pastor</li>
               </ul>
             </div>
-            <div class="hero-float p-4 w-56 -bottom-10 sm:bottom-6 right-2 sm:right-32 rotate-1 float-y-fast z-20">
+            <div class="hero-float p-4 w-56 -bottom-10 sm:bottom-10 right-4 sm:right-56 md:right-64 rotate-1 float-y-fast z-20">
               <p class="font-semibold">Groceries ready</p>
               <div class="mt-2 flex flex-wrap gap-2">
                 <span class="badge-tag">tomatoes</span>
@@ -184,5 +184,57 @@
   <script src="scripts/helpers.js"></script>
   <script src="scripts/ui.js"></script>
   <script src="scripts/main.js"></script>
+  <script>
+    (function(){
+      function rectsOverlap(a,b){
+        return !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
+      }
+      function adjustHeroFloats(){
+        var container = document.getElementById('heroFloats');
+        var text = document.getElementById('heroText');
+        if (!container || !container.parentElement) return;
+        var parent = container.parentElement; // relative wrapper
+        var parentRect = parent.getBoundingClientRect();
+        var cards = Array.prototype.slice.call(container.querySelectorAll('.hero-float'));
+        if (!cards.length) return;
+        // reset inline positioning to defaults
+        cards.forEach(function(card){
+          card.style.top = '';
+          card.style.bottom = '';
+        });
+        var textRect = text ? text.getBoundingClientRect() : null;
+        var items = cards.map(function(card){
+          var r = card.getBoundingClientRect();
+          return { el: card, rect: r, top: r.top - parentRect.top, h: r.height };
+        }).sort(function(a,b){ return a.top - b.top; });
+        var gap = 12; // spacing between rows
+        for (var i=0;i<items.length;i++){
+          var item = items[i];
+          var newTop = item.top;
+          var itemRect = item.rect;
+          // Avoid overlapping the hero text block
+          if (textRect && rectsOverlap(itemRect, textRect)){
+            newTop = Math.max(newTop, (textRect.bottom - parentRect.top) + gap);
+          }
+          // Avoid overlapping previous cards; push to next row if needed
+          for (var j=0;j<i;j++){
+            var prevRect = items[j].el.getBoundingClientRect();
+            var curRect = item.el.getBoundingClientRect();
+            if (rectsOverlap(curRect, prevRect)){
+              var prevTop = (parseFloat(items[j].el.style.top) || (prevRect.top - parentRect.top));
+              newTop = Math.max(newTop, prevTop + prevRect.height + gap);
+            }
+          }
+          item.el.style.top = Math.round(newTop) + 'px';
+          item.el.style.bottom = 'auto';
+          // update rect cache
+          item.rect = item.el.getBoundingClientRect();
+        }
+      }
+      function rafAdjust(){ window.requestAnimationFrame(adjustHeroFloats); }
+      window.addEventListener('load', rafAdjust);
+      window.addEventListener('resize', rafAdjust);
+    })();
+  </script>
 </body>
 </html>
