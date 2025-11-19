@@ -1,0 +1,83 @@
+:root {
+  --paper: #FAFAF7;
+  --paper-deep: #F3F2ED;
+  --ink-800: #1F2937;
+  --ink-700: #344150;
+  --ink-600: #5B6674;
+  --ink-500: #7B8794;
+
+  --primary-700: #D43C32; /* tomato deeper */
+  --primary-600: #E94B3C; /* tomato */
+  --primary-300: #FFB3A8;
+  --primary-200: #FFD2CC;
+  --primary-100: #FFE6E2;
+
+  --mint-800: #1D6B57;
+  --mint-100: #DAF1E9;
+  --mint-50: #ECF8F4;
+
+  --accent-800: #7A5B00;
+  --accent-100: #FFF3C8;
+  --accent-50: #FFF8DC;
+
+  --success-600: #2E8B57;
+}
+
+html, body { height: 100%; }
+body { font-family: 'Open Sans', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
+
+h1, h2, h3, h4, .display { font-family: 'Work Sans', 'Open Sans', sans-serif; }
+
+/* Animations */
+@keyframes floatY {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.float-y-slow { animation: floatY 7s ease-in-out infinite; }
+.float-y-medium { animation: floatY 5.5s ease-in-out infinite; }
+.float-y-fast { animation: floatY 4s ease-in-out infinite; }
+.fade-in-up { animation: fadeInUp 500ms ease-out both; }
+.animate-scale-in { animation: scaleIn 220ms ease-out both; }
+
+/* Micro interactions */
+button, a.btn-primary, a.btn-secondary { transition: transform 200ms ease, box-shadow 200ms ease; }
+button:active, a.btn-primary:active, a.btn-secondary:active { transform: translateY(1px); }
+
+/***** Recipe Cards *****/
+.recipe-card { position: relative; overflow: hidden; }
+.recipe-card:hover { transform: translateY(-2px); }
+.recipe-title { font-family: 'Work Sans', sans-serif; }
+
+.star { cursor: pointer; transition: color 200ms ease, transform 200ms ease; }
+.star:hover { transform: scale(1.05); }
+.star.fav { color: var(--primary-600); }
+
+.tag-chip { cursor: pointer; }
+.tag-chip:hover { filter: saturate(1.2); }
+
+/***** Planner *****/
+.day-card { border-radius: 1rem; background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); }
+.day-recipe { background: var(--accent-50); border: 1px solid rgba(0,0,0,0.05); border-radius: 9999px; padding: 6px 10px; display: inline-flex; align-items: center; gap: 8px; }
+.day-recipe button { border-radius: 9999px; }
+
+/***** Grocery List *****/
+.grocery-item { display: flex; align-items: center; gap: 10px; background: white; border-radius: 12px; padding: 10px 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 8px 16px rgba(0,0,0,0.03); }
+.grocery-item.checked { opacity: 0.6; text-decoration: line-through; }
+
+/***** Accessibility *****/
+:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(233,75,60,0.35); border-radius: 12px; }
+
+/* Responsive helpers */
+@media (max-width: 640px) {
+  .btn-primary, .btn-secondary { padding-left: 14px; padding-right: 14px; }
+}

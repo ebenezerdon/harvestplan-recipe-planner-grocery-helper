@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HarvestPlan - Recipe Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Work+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style type="text/tailwindcss" data-teda="tailwind-apply">
+    @layer components {
+      .btn-primary { @apply whitespace-nowrap inline-flex items-center justify-center rounded-full px-5 py-3 text-white font-semibold shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--primary-200)] bg-[color:var(--primary-600)] hover:bg-[color:var(--primary-700)] active:scale-[0.99]; }
+      .btn-secondary { @apply whitespace-nowrap inline-flex items-center justify-center rounded-full px-4 py-2 font-semibold shadow-sm transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-black/10 bg-white text-[color:var(--ink-700)] ring-1 ring-black/5 hover:shadow-md; }
+      .badge-tag { @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-[color:var(--mint-50)] text-[color:var(--mint-800)] ring-1 ring-black/5; }
+      .card { @apply bg-white rounded-2xl shadow-lg ring-1 ring-black/5 transition-transform duration-300; }
+      .hero-float { @apply absolute rounded-2xl shadow-xl ring-1 ring-black/5 bg-white; }
+      .nav-link { @apply text-[color:var(--ink-700)] hover:text-[color:var(--primary-700)] transition-colors duration-300 font-semibold; }
+    }
+  </style>
+</head>
+<body class="antialiased bg-[color:var(--paper)] text-[color:var(--ink-800)]">
+  <header class="relative z-20">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3">
+        <img src="assets/logo.svg" alt="HarvestPlan Logo" class="h-9 w-9"/>
+        <span class="font-extrabold text-xl tracking-tight" style="font-family: 'Work Sans', sans-serif;">HarvestPlan</span>
+      </a>
+      <nav class="hidden sm:flex items-center gap-8">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how" class="nav-link">How it works</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="app.html" class="btn-primary">Open Planner</a>
+      </nav>
+      <div class="sm:hidden">
+        <a href="app.html" class="btn-primary">Open</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6 pt-16 pb-32">
+        <div class="relative min-h-[28rem]">
+          <div class="max-w-xl pt-10 relative z-30">
+            <h1 class="text-5xl sm:text-6xl leading-tight font-black tracking-tight mb-6" style="font-family: 'Work Sans', sans-serif;">
+              Plan delicious weeks. Shop smarter.
+            </h1>
+            <p class="text-lg sm:text-xl text-[color:var(--ink-600)] leading-relaxed" style="font-family: 'Open Sans', sans-serif;">
+              Organize recipes, tag your favorites, and auto-build a grocery list from your weekly plan. Beautiful, fast, and built for real kitchens.
+            </p>
+            <div class="mt-8 flex items-center gap-3">
+              <a href="app.html" class="btn-primary">Start planning</a>
+              <a href="#features" class="btn-secondary">Explore features</a>
+            </div>
+          </div>
+
+          <!-- Floating, overlapping hero objects -->
+          <div class="pointer-events-none hidden sm:block" aria-hidden="true">
+            <div class="hero-float p-4 w-60 top-10 right-4 sm:right-24 rotate-2 float-y-medium z-10">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-[color:var(--mint-100)] ring-1 ring-black/5 flex items-center justify-center">
+                  <span class="text-[color:var(--mint-800)] text-lg">🥗</span>
+                </div>
+                <div>
+                  <p class="font-semibold">Green Goddess Bowl</p>
+                  <p class="text-xs text-[color:var(--ink-500)]">15 min • vegetarian</p>
+                </div>
+              </div>
+            </div>
+            <div class="hero-float p-5 w-64 top-56 right-6 sm:right-52 -rotate-3 float-y-slow z-10">
+              <p class="font-semibold mb-2">This week</p>
+              <ul class="text-sm text-[color:var(--ink-700)] space-y-1">
+                <li>• Mon: Lentil Soup</li>
+                <li>• Wed: Lemon Pasta</li>
+                <li>• Sat: Tacos al Pastor</li>
+              </ul>
+            </div>
+            <div class="hero-float p-4 w-56 -bottom-10 sm:bottom-6 right-2 sm:right-32 rotate-1 float-y-fast z-20">
+              <p class="font-semibold">Groceries ready</p>
+              <div class="mt-2 flex flex-wrap gap-2">
+                <span class="badge-tag">tomatoes</span>
+                <span class="badge-tag">basil</span>
+                <span class="badge-tag">garlic</span>
+              </div>
+            </div>
+            <div class="absolute -right-16 sm:-right-10 top-28 h-52 w-52 rounded-full bg-[color:var(--accent-100)] shadow-lg blur-0 opacity-70 z-0"></div>
+            <div class="absolute -left-10 bottom-10 h-40 w-40 rounded-[2rem] bg-[color:var(--primary-100)] shadow-lg rotate-6 opacity-80 z-0"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="py-16 sm:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-10">
+          <h2 class="text-3xl sm:text-4xl font-extrabold mb-3" style="font-family: 'Work Sans', sans-serif;">Everything you need for stress-free cooking</h2>
+          <p class="text-[color:var(--ink-600)] text-lg" style="font-family: 'Open Sans', sans-serif;">Recipes, planning, tags, favorites, and a grocery helper that actually helps.</p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="card p-6 sm:p-8 flex items-start gap-6">
+            <div class="h-12 w-12 rounded-xl bg-[color:var(--primary-100)] flex items-center justify-center ring-1 ring-black/5">
+              <span class="text-2xl">📒</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-xl mb-1" style="font-family: 'Work Sans', sans-serif;">Recipe library</h3>
+              <p class="text-[color:var(--ink-700)]">Create, tag, and favorite your recipes. Filter by tags or search instantly.</p>
+            </div>
+          </div>
+          <div class="card p-6 sm:p-8 flex items-start gap-6">
+            <div class="h-12 w-12 rounded-xl bg-[color:var(--mint-100)] flex items-center justify-center ring-1 ring-black/5">
+              <span class="text-2xl">🗓️</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-xl mb-1" style="font-family: 'Work Sans', sans-serif;">Weekly planner</h3>
+              <p class="text-[color:var(--ink-700)]">Assign recipes to days with a tap. Your week at a glance with clean, friendly visuals.</p>
+            </div>
+          </div>
+          <div class="card p-6 sm:p-8 flex items-start gap-6">
+            <div class="h-12 w-12 rounded-xl bg-[color:var(--accent-100)] flex items-center justify-center ring-1 ring-black/5">
+              <span class="text-2xl">🛒</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-xl mb-1" style="font-family: 'Work Sans', sans-serif;">Grocery helper</h3>
+              <p class="text-[color:var(--ink-700)]">Auto-aggregate ingredients, check them off in-store, and add custom items on the fly.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <a href="app.html" class="btn-primary">Open the planner</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="py-16 sm:py-24 bg-[color:var(--paper-deep)]">
+      <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl sm:text-4xl font-extrabold mb-8" style="font-family: 'Work Sans', sans-serif;">Three easy steps</h2>
+        <ol class="space-y-6">
+          <li class="card p-6 sm:p-8">
+            <p class="font-bold text-lg mb-1">1. Add your recipes</p>
+            <p class="text-[color:var(--ink-700)]">Include tags, ingredients, and steps. Star your go-to favorites.</p>
+          </li>
+          <li class="card p-6 sm:p-8">
+            <p class="font-bold text-lg mb-1">2. Plan your week</p>
+            <p class="text-[color:var(--ink-700)]">Drop recipes into days and keep dinner decisions off your mind.</p>
+          </li>
+          <li class="card p-6 sm:p-8">
+            <p class="font-bold text-lg mb-1">3. Shop smarter</p>
+            <p class="text-[color:var(--ink-700)]">Generate a grocery list from your plan, aggregated and ready to check off.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="faq" class="py-16 sm:py-24 bg-white">
+      <div class="max-w-5xl mx-auto px-6">
+        <h2 class="text-3xl sm:text-4xl font-extrabold mb-6" style="font-family: 'Work Sans', sans-serif;">FAQ</h2>
+        <div class="space-y-6">
+          <details class="card p-5">
+            <summary class="cursor-pointer font-semibold">Does it work offline?</summary>
+            <p class="mt-2 text-[color:var(--ink-700)]">Your data is saved locally in your browser, so your recipes and lists are available even without a connection.</p>
+          </details>
+          <details class="card p-5">
+            <summary class="cursor-pointer font-semibold">Can I import ingredients to grocery?</summary>
+            <p class="mt-2 text-[color:var(--ink-700)]">Yes. Build your week and tap Generate from Planner in the grocery helper.</p>
+          </details>
+        </div>
+        <div class="mt-10">
+          <a href="app.html" class="btn-primary">Plan my meals</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-10 text-center text-sm text-[color:var(--ink-600)]">
+    <p>
+      Built with love for home cooks. <a href="app.html" class="font-semibold text-[color:var(--primary-700)] hover:underline">Open the app</a>.
+    </p>
+  </footer>
+  <script src="scripts/helpers.js"></script>
+  <script src="scripts/ui.js"></script>
+  <script src="scripts/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HarvestPlan logo">
+  <defs>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <rect x="14" y="14" width="100" height="100" rx="22" fill="#E94B3C" filter="url(#s)"/>
+  <g transform="translate(20,22)">
+    <path d="M34 68c-8-6-14-16-14-26 0-14 12-26 26-26 7 0 13 3 18 7-10 2-19 10-22 20 3 2 6 4 10 4 7 0 12-6 12-12 0-3-1-5-2-7 10 5 16 15 16 26 0 18-14 32-32 32-6 0-12-2-16-5 1-4 2-9-6-13z" fill="#FFF3C8"/>
+    <circle cx="28" cy="20" r="6" fill="#DAF1E9"/>
+  </g>
+</svg>

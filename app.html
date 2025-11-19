@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HarvestPlan App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Work+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss.js"></script>
+</head>
+<body class="antialiased bg-[color:var(--paper)] text-[color:var(--ink-800)]">
+  <header class="bg-white/90 backdrop-blur supports-backdrop-blur:backdrop-blur-md sticky top-0 z-40 ring-1 ring-black/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/logo.svg" alt="HarvestPlan Logo" class="h-8 w-8"/>
+        <span class="font-extrabold text-lg tracking-tight" style="font-family: 'Work Sans', sans-serif;">HarvestPlan</span>
+      </a>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button id="btnAddRecipe" class="btn-primary" aria-label="Add recipe">Add recipe</button>
+        <a href="index.html" class="btn-secondary" aria-label="Back to landing">Landing</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Library and Filters -->
+      <section class="lg:col-span-2 space-y-4">
+        <div class="card p-4 sm:p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex-1 flex items-center gap-3">
+              <div class="relative w-full">
+                <input id="searchInput" type="text" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-4 py-3 text-[color:var(--ink-800)] focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none transition-all placeholder:text-[color:var(--ink-400)]" placeholder="Search recipes by name or ingredient"/>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--ink-400)]">⌘K</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="toggleFavorites" class="btn-secondary" aria-pressed="false">Favorites</button>
+              <button id="clearFilters" class="btn-secondary">Clear filters</button>
+            </div>
+          </div>
+          <div id="activeTags" class="mt-3 hidden"></div>
+        </div>
+
+        <div id="recipeList" class="grid sm:grid-cols-2 gap-4"></div>
+        <div id="emptyLibrary" class="hidden card p-8 text-center">
+          <p class="text-lg font-semibold mb-2">No recipes yet</p>
+          <p class="text-[color:var(--ink-600)]">Add your first recipe to get started.</p>
+          <div class="mt-4"><button id="emptyAddBtn" class="btn-primary">Add recipe</button></div>
+        </div>
+      </section>
+
+      <!-- Planner & Grocery Sidebar -->
+      <aside class="space-y-4">
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="font-bold" style="font-family: 'Work Sans', sans-serif;">Weekly planner</h2>
+            <button id="clearPlanner" class="btn-secondary text-sm">Clear</button>
+          </div>
+          <div id="plannerBoard" class="space-y-3"></div>
+        </div>
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="font-bold" style="font-family: 'Work Sans', sans-serif;">Grocery helper</h2>
+            <div class="flex items-center gap-2">
+              <button id="generateGroceries" class="btn-secondary text-sm">Generate from planner</button>
+              <button id="clearGroceries" class="btn-secondary text-sm">Clear</button>
+            </div>
+          </div>
+          <div class="flex gap-2 mb-3">
+            <input id="customGroceryInput" type="text" class="flex-1 rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" placeholder="Add custom item (e.g. 2 limes)"/>
+            <button id="addCustomGrocery" class="btn-primary">Add</button>
+          </div>
+          <ul id="groceryList" class="space-y-2 max-h-80 overflow-auto pr-1"></ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Recipe Modal -->
+  <div id="recipeModal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black/30" data-close="modal"></div>
+    <div class="relative card w-[95vw] max-w-2xl p-5 bg-white animate-scale-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="modalTitle" class="text-xl font-bold" style="font-family: 'Work Sans', sans-serif;">New recipe</h3>
+        <button class="btn-secondary" data-close="modal">Close</button>
+      </div>
+      <form id="recipeForm" class="space-y-3">
+        <input type="hidden" id="recipeId" />
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Title</label>
+            <input id="recipeTitle" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" required placeholder="e.g., Lemon Garlic Pasta" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Tags (comma separated)</label>
+            <input id="recipeTags" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" placeholder="quick, vegetarian, dinner" />
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Servings</label>
+            <input id="recipeServings" type="number" min="1" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" placeholder="2" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Time (min)</label>
+            <input id="recipeTime" type="number" min="1" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" placeholder="20" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Favorite</label>
+            <select id="recipeFavorite" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">Ingredients (one per line)</label>
+          <textarea id="recipeIngredients" rows="5" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" placeholder="1 cup cherry tomatoes\n2 cloves garlic\n200 g spaghetti"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">Steps</label>
+          <textarea id="recipeSteps" rows="5" class="w-full rounded-xl border-0 ring-1 ring-black/5 bg-white px-3 py-2 focus:ring-2 focus:ring-[color:var(--primary-300)] outline-none" placeholder="Boil pasta...\nSaute garlic..."></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" class="btn-secondary" data-close="modal">Cancel</button>
+          <button type="submit" class="btn-primary">Save recipe</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tailwind component utilities -->
+  <style type="text/tailwindcss" data-teda="tailwind-apply">
+    @layer components {
+      .btn-primary { @apply whitespace-nowrap inline-flex items-center justify-center rounded-full px-5 py-3 text-white font-semibold shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--primary-200)] bg-[color:var(--primary-600)] hover:bg-[color:var(--primary-700)] active:scale-[0.99]; }
+      .btn-secondary { @apply whitespace-nowrap inline-flex items-center justify-center rounded-full px-4 py-2 font-semibold shadow-sm transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-black/10 bg-white text-[color:var(--ink-700)] ring-1 ring-black/5 hover:shadow-md; }
+      .badge-tag { @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-[color:var(--mint-50)] text-[color:var(--mint-800)] ring-1 ring-black/5; }
+      .card { @apply bg-white rounded-2xl shadow-lg ring-1 ring-black/5 transition-transform duration-300; }
+      .pill { @apply rounded-full px-2.5 py-1 text-xs font-semibold bg-[color:var(--accent-50)] text-[color:var(--accent-800)] ring-1 ring-black/5; }
+    }
+  </style>
+
+  <!-- Scripts order (hard contract) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="scripts/helpers.js"></script>
+  <script src="scripts/ui.js"></script>
+  <script src="scripts/main.js"></script>
+</body>
+</html>
